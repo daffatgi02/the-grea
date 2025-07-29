@@ -1,0 +1,48 @@
+
+{
+  "gameSession": {
+    "duration": 3600000,
+    "lobbyDuration": 30000,
+    "maxPlayers": 48
+  },
+  "maps": {
+    "city": {
+      "name": "Perkotaan (City)",
+      "spawns": [
+        {"x": 215.0, "y": -810.0, "z": 30.8, "h": 342.0},
+        {"x": -1037.0, "y": -2737.0, "z": 20.2, "h": 240.0}
+      ],
+      "safezone": {"x": -1037.8, "y": -2674.0, "z": 13.8, "radius": 100.0},
+      "description": "Urban warfare in Los Santos"
+    }
+  },
+  "combat": {
+    "maxHealth": 100,
+    "maxArmor": 100,
+    "maxArmorKits": 3,
+    "killReward": 100,
+    "friendlyFire": true,
+    "weaponDurability": true
+  },
+  "roles": {
+    "assault": {
+      "name": "Assault",
+      "icon": "💥",
+      "abilities": {
+        "damage_multiplier": 1.2,
+        "heavy_weapons": true,
+        "armor_boost": 0
+      },
+      "weapons": ["WEAPON_ASSAULTRIFLE", "WEAPON_COMBATPISTOL"]
+    }
+  },
+  "economy": {
+    "killReward": 100,
+    "assistReward": 50,
+    "survivalBonus": 10,
+    "shopItems": {
+      "weapon_assaultrifle": 500,
+      "armor": 100
+    }
+  }
+}
