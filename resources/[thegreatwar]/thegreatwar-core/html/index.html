@@ -1,0 +1,40 @@
+<!-- resources/[thegreatwar]/thegreatwar-core/html/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Great War</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Map Voting UI -->
+    <div id="votingContainer" class="hidden">
+        <div class="voting-modal">
+            <h2>🗳️ Vote for Next Map</h2>
+            <div class="map-options" id="mapOptions">
+                <!-- Dynamic map options will be inserted here -->
+            </div>
+            <div class="voting-timer">
+                <span id="timerText">Time remaining: 30s</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kill Feed -->
+    <div id="killFeed" class="kill-feed">
+        <!-- Kill notifications will appear here -->
+    </div>
+
+    <!-- Champion Announcement -->
+    <div id="championModal" class="champion-modal hidden">
+        <div class="champion-content">
+            <h1 id="championTitle">🏆 CHAMPION ANNOUNCED</h1>
+            <div id="championName"></div>
+            <div id="championKills"></div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

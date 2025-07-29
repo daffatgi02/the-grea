@@ -1,0 +1,218 @@
+/* resources/[thegreatwar]/thegreatwar-core/html/css/style.css */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Arial", sans-serif;
+  background: transparent;
+  overflow: hidden;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Voting UI */
+.voting-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.9);
+  border: 2px solid #ff6b35;
+  border-radius: 10px;
+  padding: 30px;
+  min-width: 500px;
+  color: white;
+  text-align: center;
+}
+
+.voting-modal h2 {
+  color: #ff6b35;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.map-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.map-option {
+  background: rgba(255, 107, 53, 0.2);
+  border: 1px solid #ff6b35;
+  border-radius: 5px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.map-option:hover {
+  background: rgba(255, 107, 53, 0.4);
+  transform: scale(1.02);
+}
+
+.map-option.selected {
+  background: rgba(255, 107, 53, 0.6);
+  border-color: #fff;
+}
+
+.map-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #ff6b35;
+}
+
+.map-description {
+  font-size: 14px;
+  color: #ccc;
+}
+
+.voting-timer {
+  color: #ff6b35;
+  font-weight: bold;
+  border-top: 1px solid #333;
+  padding-top: 15px;
+}
+
+/* Kill Feed */
+.kill-feed {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  width: 350px;
+  z-index: 1000;
+}
+
+.kill-item {
+  background: rgba(0, 0, 0, 0.8);
+  border-left: 3px solid #ff6b35;
+  margin-bottom: 5px;
+  padding: 10px 15px;
+  border-radius: 5px;
+  color: white;
+  font-size: 14px;
+  animation: slideIn 0.3s ease-out;
+  opacity: 0.9;
+}
+
+.kill-item.fade-out {
+  animation: fadeOut 0.5s ease-out forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 0.9;
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+.killer {
+  color: #ff6b35;
+  font-weight: bold;
+}
+
+.victim {
+  color: #ff4757;
+}
+
+.distance {
+  color: #ffa502;
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* Champion Modal */
+.champion-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.champion-content {
+  background: linear-gradient(135deg, #ff6b35, #f9ca24);
+  border-radius: 20px;
+  padding: 50px;
+  text-align: center;
+  color: #000;
+  box-shadow: 0 0 50px rgba(255, 107, 53, 0.5);
+  animation: championPulse 2s infinite alternate;
+}
+
+@keyframes championPulse {
+  from {
+    transform: scale(1);
+    box-shadow: 0 0 50px rgba(255, 107, 53, 0.5);
+  }
+  to {
+    transform: scale(1.05);
+    box-shadow: 0 0 80px rgba(255, 107, 53, 0.8);
+  }
+}
+
+#championTitle {
+  font-size: 36px;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+#championName {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+#championKills {
+  font-size: 20px;
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .voting-modal {
+    min-width: 90%;
+    padding: 20px;
+  }
+
+  .kill-feed {
+    width: calc(100% - 40px);
+    right: 20px;
+  }
+
+  .champion-content {
+    padding: 30px;
+    margin: 20px;
+  }
+
+  #championTitle {
+    font-size: 24px;
+  }
+
+  #championName {
+    font-size: 20px;
+  }
+
+  #championKills {
+    font-size: 16px;
+  }
+}
