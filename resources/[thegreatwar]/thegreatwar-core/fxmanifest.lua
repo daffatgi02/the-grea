@@ -8,7 +8,6 @@ version '1.0.0'
 
 shared_scripts {
     '@qb-core/shared/locale.lua',
-    'config.lua',
     'shared/*.lua'
 }
 
@@ -26,7 +25,8 @@ ui_page 'html/index.html'
 files {
     'html/index.html',
     'html/css/*.css',
-    'html/js/*.js'
+    'html/js/*.js',
+    'config.json'
 }
 
 dependencies {
@@ -36,5 +36,6 @@ dependencies {
     'qb-inventory',
     'qb-weapons',
     'qb-target',
+    'qb-radio',
     'oxmysql'
 }
