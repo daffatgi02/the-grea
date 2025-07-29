@@ -19,7 +19,7 @@ local function StartNewSession(mapName)
     GameState.status = "active"
     GameState.currentMap = mapName
     GameState.sessionStartTime = os.time()
-    GameState.sessionEndTime = os.time() + (Config.SessionDuration / 1000)
+    GameState.sessionEndTime = os.time() + (Config.gameSession.duration / 1000)
     
     -- Create session in database
     MySQL.Async.insert('INSERT INTO thegreatwar_sessions (map_name, champion_type, champion_name) VALUES (?, ?, ?)', {
@@ -31,11 +31,11 @@ local function StartNewSession(mapName)
         TriggerClientEvent('thegreatwar:sessionStarted', -1, {
             sessionId = sessionId,
             map = mapName,
-            duration = Config.SessionDuration / 1000
+            duration = Config.gameSession.duration / 1000
         })
         
         -- Start session timer
-        SetTimeout(Config.SessionDuration, function()
+        SetTimeout(Config.gameSession.duration, function()
             EndCurrentSession()
         end)
     end)
@@ -99,9 +99,9 @@ local function CalculateChampion()
     else
         return {
             type = "solo",
-            name = bestSolo.player.nickname,
+            name = bestSolo.player and bestSolo.player.nickname or "Unknown",
             kills = bestSolo.kills,
-            displayName = "🏆 CHAMPION: " .. bestSolo.player.nickname .. " — " .. bestSolo.kills .. " KILLS"
+            displayName = "🏆 CHAMPION: " .. (bestSolo.player and bestSolo.player.nickname or "Unknown") .. " — " .. bestSolo.kills .. " KILLS"
         }
     end
 end
@@ -111,10 +111,11 @@ local function StartLobbyPhase()
     GameState.votes = {}
     
     -- Notify all players to show voting UI
-    TriggerClientEvent('thegreatwar:showMapVoting', -1, Config.Maps)
+    TriggerClientEvent('thegreatwar:showMapVoting', -1, Config.maps)
     
-    -- Start voting timer
-    SetTimeout(Config.LobbyDuration, function()
+    -- Start voting timer - Fix: use proper config value
+    local lobbyDuration = Config.gameSession and Config.gameSession.lobbyDuration or 30000
+    SetTimeout(lobbyDuration, function()
         local winningMap = CountVotes()
         StartNewSession(winningMap)
     end)
@@ -123,7 +124,7 @@ end
 local function CountVotes()
     local voteCounts = {}
     
-    for mapName, _ in pairs(Config.Maps) do
+    for mapName, _ in pairs(Config.maps) do
         voteCounts[mapName] = 0
     end
     
@@ -146,7 +147,6 @@ local function CountVotes()
     
     return winningMap
 end
-
 -- Player Management
 RegisterNetEvent('thegreatwar:playerJoined', function()
     local src = source
@@ -170,110 +170,21 @@ RegisterNetEvent('thegreatwar:playerJoined', function()
     TriggerClientEvent('thegreatwar:gameStateUpdate', src, GameState)
 end)
 
-RegisterNetEvent('thegreatwar:playerLeft', function()
-    local src = source
-    if GameState.players[src] then
-        GameState.players[src] = nil
-    end
-end)
-
--- Vote Handling
-RegisterNetEvent('thegreatwar:voteMap', function(mapName)
-    local src = source
-    if GameState.status ~= "lobby" then return end
-    if not Config.Maps[mapName] then return end
-    
-    GameState.votes[src] = mapName
-    TriggerClientEvent('thegreatwar:voteReceived', src, mapName)
-end)
-
--- Role Selection
-RegisterNetEvent('thegreatwar:selectRole', function(roleName)
-    local src = source
-    if not Config.Roles[roleName] then return end
-    if not GameState.players[src] then return end
-    
-    GameState.players[src].role = roleName
-    TriggerClientEvent('thegreatwar:roleSelected', src, roleName)
-    
-    -- Give role-specific items
-    GiveRoleEquipment(src, roleName)
-end)
-
-local function GiveRoleEquipment(src, roleName)
-    local role = Config.Roles[roleName]
-    local Player = QBCore.Functions.GetPlayer(src)
-    if not Player then return end
-    
-    -- Clear inventory first
-    Player.Functions.ClearInventory()
-    
-    -- Give role weapons
-    for _, weapon in ipairs(role.weapons) do
-        Player.Functions.AddItem(weapon, 1)
-    end
-    
-    -- Give role-specific items
-    if roleName == "medic" then
-        Player.Functions.AddItem("bandage", 5 + role.abilities.medical_kit_bonus)
-    elseif roleName == "support" then
-        Player.Functions.AddItem("pistol_ammo", math.floor(250 * role.abilities.ammo_capacity))
-        Player.Functions.AddItem("rifle_ammo", math.floor(500 * role.abilities.ammo_capacity))
-    end
-    
-    -- Give basic items to all roles
-    Player.Functions.AddItem("armor", 3) -- 3 armor kits
-end
-
--- Kill/Death Tracking
-RegisterNetEvent('thegreatwar:playerKilled', function(killerId, victimId, weapon, distance, coords)
-    if GameState.status ~= "active" then return end
-    
-    local killer = GameState.players[killerId]
-    local victim = GameState.players[victimId]
-    
-    if not killer or not victim then return end
-    
-    -- Update stats
-    killer.kills = killer.kills + 1
-    killer.money = killer.money + Config.Combat.KillReward
-    victim.deaths = victim.deaths + 1
-    
-    -- Update crew stats if applicable
-    if killer.crew then
-        if not GameState.crews[killer.crew] then
-            GameState.crews[killer.crew] = {totalKills = 0, members = {}, topPlayer = killer}
-        end
-        GameState.crews[killer.crew].totalKills = GameState.crews[killer.crew].totalKills + 1
-        
-        -- Update top player in crew
-        if killer.kills > GameState.crews[killer.crew].topPlayer.kills then
-            GameState.crews[killer.crew].topPlayer = killer
-        end
-    end
-    
-    -- Log kill to database
-    MySQL.Async.insert('INSERT INTO thegreatwar_kill_log (session_id, killer_id, victim_id, weapon, distance, location_x, location_y, location_z) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', {
-        GameState.currentSession, killerId, victimId, weapon, distance, coords.x, coords.y, coords.z
-    })
-    
-    -- Notify all players of kill
-    TriggerClientEvent('thegreatwar:killFeed', -1, {
-        killer = killer.nickname,
-        victim = victim.nickname,
-        weapon = weapon,
-        distance = distance
-    })
-end)
-
 -- Initialize on resource start
 AddEventHandler('onResourceStart', function(resourceName)
     if GetCurrentResourceName() ~= resourceName then return end
     
     print("^2[The Great War] ^7Starting gamemode...")
     
-    -- Start with lobby phase
-    StartLobbyPhase()
+    -- Wait for config to be loaded
+    CreateThread(function()
+        while not Config.gameSession do
+            Wait(100)
+        end
+        
+        -- Start with lobby phase
+        StartLobbyPhase()
+    end)
 end)
 
 -- Exports

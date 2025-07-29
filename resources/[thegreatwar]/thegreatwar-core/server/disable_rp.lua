@@ -3,8 +3,21 @@ local QBCore = exports['qb-core']:GetCoreObject()
 
 -- Disable default QBCore features
 CreateThread(function()
-    -- Disable spawning at apartments/houses
-    exports['qb-apartments']:DisableSpawning()
+    Wait(1000) -- Wait for all resources to load
+    
+    -- Try to disable spawning, but handle if export doesn't exist
+    local success, error = pcall(function()
+        if GetResourceState('qb-apartments') == 'started' then
+            local apartmentExports = exports['qb-apartments']
+            if apartmentExports.DisableSpawning then
+                apartmentExports:DisableSpawning()
+            end
+        end
+    end)
+    
+    if not success then
+        print("^3[The Great War] ^7Could not disable apartment spawning: " .. tostring(error))
+    end
     
     -- Disable civilian jobs
     if GetResourceState('qb-ambulancejob') == 'started' then

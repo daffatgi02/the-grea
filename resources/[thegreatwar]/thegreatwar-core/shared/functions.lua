@@ -5,15 +5,44 @@ Config = {}
 function LoadConfig()
     local file = LoadResourceFile(GetCurrentResourceName(), 'config.json')
     if file then
-        Config = json.decode(file)
-        print("^2[The Great War] ^7Config loaded successfully")
+        local success, decoded = pcall(json.decode, file)
+        if success then
+            Config = decoded
+            print("^2[The Great War] ^7Config loaded successfully")
+            return true
+        else
+            print("^1[The Great War] ^7Failed to parse config.json")
+            return false
+        end
     else
         print("^1[The Great War] ^7Failed to load config.json")
+        return false
     end
 end
 
 -- Initialize config on resource start
-LoadConfig()
+if not LoadConfig() then
+    -- Fallback config
+    Config = {
+        gameSession = {
+            duration = 3600000,
+            lobbyDuration = 30000,
+            maxPlayers = 48
+        },
+        maps = {
+            city = {
+                name = "Perkotaan (City)",
+                spawns = {
+                    {x = 215.0, y = -810.0, z = 30.8, h = 342.0},
+                    {x = -1037.0, y = -2737.0, z = 20.2, h = 240.0}
+                },
+                safezone = {x = -1037.8, y = -2674.0, z = 13.8, radius = 100.0},
+                description = "Urban warfare in Los Santos"
+            }
+        }
+    }
+    print("^3[The Great War] ^7Using fallback config")
+end
 
 -- Utility functions
 function Config.GetRandomSpawn(mapName)
