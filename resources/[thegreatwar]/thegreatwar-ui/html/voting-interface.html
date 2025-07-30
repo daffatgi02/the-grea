@@ -1,0 +1,34 @@
+<!-- resources/[thegreatwar]/thegreatwar-ui/html/voting-interface.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Voting</title>
+    <link rel="stylesheet" href="css/voting-interface.css">
+</head>
+<body>
+    <div id="votingModal" class="voting-modal">
+        <div class="voting-header">
+            <h2>🗳️ Vote for Next Battlefield</h2>
+            <div class="voting-subtitle">Choose your warzone for the next hour of combat</div>
+        </div>
+        
+        <div class="map-grid" id="mapGrid">
+            <!-- Dynamic map options will be inserted here -->
+        </div>
+        
+        <div class="voting-footer">
+            <div class="voting-timer">
+                <div class="timer-icon">⏱️</div>
+                <div class="timer-text" id="timerText">Time remaining: 30s</div>
+            </div>
+            <div class="voting-stats" id="votingStats">
+                <div class="total-votes">Total votes: 0</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/voting-interface.js"></script>
+</body>
+</html>

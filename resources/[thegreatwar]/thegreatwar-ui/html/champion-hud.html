@@ -1,0 +1,33 @@
+<!-- resources/[thegreatwar]/thegreatwar-ui/html/champion-hud.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Champion HUD</title>
+    <link rel="stylesheet" href="css/champion-hud.css">
+</head>
+<body>
+    <div id="championDisplay" class="champion-container">
+        <div class="champion-crown">👑</div>
+        <div class="champion-info">
+            <div class="champion-title">CURRENT CHAMPION</div>
+            <div class="champion-name" id="championName">Loading...</div>
+            <div class="champion-kills" id="championKills">0 KILLS</div>
+            <div class="champion-type" id="championType">SOLO</div>
+        </div>
+        <div class="champion-timer">
+            <div class="session-time" id="sessionTimer">00:00</div>
+            <div class="session-status" id="sessionStatus">LOBBY</div>
+        </div>
+    </div>
+
+    <div id="killStreakNotify" class="killstreak-container">
+        <div class="killstreak-icon">🔥</div>
+        <div class="killstreak-text" id="killStreakText">KILLING SPREE!</div>
+        <div class="killstreak-count" id="killStreakCount">5 KILL STREAK</div>
+    </div>
+
+    <script src="js/champion-hud.js"></script>
+</body>
+</html>

@@ -3,7 +3,7 @@ fx_version 'cerulean'
 game 'gta5'
 lua54 'yes'
 author 'TheGreatWar'
-description 'The Great War - Match-Based Warfare System for QBCore'
+description 'The Great War - Complete Phase 1 Implementation'
 version '1.0.0'
 
 shared_scripts {
@@ -38,13 +38,20 @@ server_scripts {
     'server/override_qb.lua'
 }
 
-ui_page 'html/index.html'
+ui_pages {
+    'html/index.html',
+    'html/champion-hud.html',
+    'html/voting-interface.html',
+    'html/session-timer.html',
+    'html/killstreak-notify.html'
+}
 
 files {
-    'html/index.html',
-    'html/css/style.css',
-    'html/js/main.js',
-    'html/leaderboard.html',
+    'html/*.html',
+    'html/css/*.css',
+    'html/js/*.js',
+    'html/assets/*.png',
+    'html/assets/*.jpg',
     'config.json',
     'resource_config.json'
 }
@@ -56,12 +63,15 @@ dependencies {
     'qb-target',
     'qb-radio',
     'pma-voice',
-    'oxmysql'
+    'oxmysql',
+    'thegreatwar-ui',
+    'thegreatwar-combat',
+    'thegreatwar-loot'
 }
 
--- Load early to manage other resources
+-- Load order
 before 'qb-multicharacter'
-before 'qb-spawn' 
+before 'qb-spawn'
 before 'qb-hud'
 before 'qb-inventory'
 before 'qb-weapons'
