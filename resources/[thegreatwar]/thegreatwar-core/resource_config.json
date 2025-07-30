@@ -1,0 +1,27 @@
+
+{
+  "gamemode": {
+    "name": "The Great War",
+    "autoStop": true,
+    "autoDetect": true
+  },
+  "resources": {
+    "essential": [
+      "mapmanager", "chat", "spawnmanager", "sessionmanager", "basic-gamemode",
+      "baseevents", "oxmysql", "qb-core", "qb-menu", "qb-input", "qb-target",
+      "interact-sound", "pma-voice", "qb-radio", "thegreatwar-core"
+    ],
+    "blacklist": [
+      "qb-ambulancejob", "qb-policejob", "qb-banking", "qb-houses", "qb-apartments",
+      "qb-vehicleshop", "qb-hud", "qb-inventory", "qb-weapons", "qb-spawn",
+      "qb-multicharacter", "qb-phone", "qb-clothing"
+    ],
+    "whitelist": [
+      "bob74_ipl", "connectqueue", "PolyZone", "progressbar"
+    ],
+    "patterns": {
+      "stop": ["^qb%-job", "^qb%-.*job$", "^qb%-housing", "^qb%-vehicle"],
+      "allow": ["^thegreatwar%-", "^tgw%-"]
+    }
+  }
+}

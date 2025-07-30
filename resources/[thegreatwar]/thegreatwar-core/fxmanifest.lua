@@ -24,6 +24,7 @@ client_scripts {
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
     'server/startup.lua',
+    'server/resource_manager.lua',
     'server/main.lua',
     'server/combat.lua',
     'server/statistics.lua',
@@ -44,7 +45,8 @@ files {
     'html/css/style.css',
     'html/js/main.js',
     'html/leaderboard.html',
-    'config.json'
+    'config.json',
+    'resource_config.json'
 }
 
 dependencies {
@@ -57,13 +59,12 @@ dependencies {
     'oxmysql'
 }
 
--- Override other resources to load gamemode first
+-- Load early to manage other resources
 before 'qb-multicharacter'
-before 'qb-spawn'
+before 'qb-spawn' 
 before 'qb-hud'
 before 'qb-inventory'
 before 'qb-weapons'
 
--- Load after core essentials
 after 'qb-core'
 after 'oxmysql'
