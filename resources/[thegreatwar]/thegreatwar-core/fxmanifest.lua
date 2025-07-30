@@ -18,7 +18,8 @@ client_scripts {
     'client/durability.lua',
     'client/voice.lua',
     'client/character_override.lua',
-    'client/force_join.lua'
+    'client/force_join.lua',
+    'client/integration.lua'
 }
 
 server_scripts {
@@ -35,23 +36,20 @@ server_scripts {
     'server/anticheat.lua',
     'server/durability.lua',
     'server/disable_rp.lua',
-    'server/override_qb.lua'
+    'server/override_qb.lua',
+    'server/integration.lua',
+    'server/testing.lua',
+    'server/performance.lua'
 }
 
-ui_pages {
-    'html/index.html',
-    'html/champion-hud.html',
-    'html/voting-interface.html',
-    'html/session-timer.html',
-    'html/killstreak-notify.html'
-}
+-- HANYA SATU ui_page
+ui_page 'html/index.html'
 
 files {
-    'html/*.html',
-    'html/css/*.css',
-    'html/js/*.js',
-    'html/assets/*.png',
-    'html/assets/*.jpg',
+    'html/index.html',
+    'html/css/style.css',
+    'html/js/main.js',
+    'html/leaderboard.html',
     'config.json',
     'resource_config.json'
 }
@@ -63,10 +61,7 @@ dependencies {
     'qb-target',
     'qb-radio',
     'pma-voice',
-    'oxmysql',
-    'thegreatwar-ui',
-    'thegreatwar-combat',
-    'thegreatwar-loot'
+    'oxmysql'
 }
 
 -- Load order
