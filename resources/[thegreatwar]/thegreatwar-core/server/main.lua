@@ -246,6 +246,31 @@ RegisterNetEvent('thegreatwar:playerLeft', function()
     end
 end)
 
+-- Add to resources/[thegreatwar]/thegreatwar-core/server/main.lua
+
+-- Handle game state requests
+RegisterNetEvent('thegreatwar:requestGameState', function()
+    local src = source
+    TriggerClientEvent('thegreatwar:gameStateResponse', src, GameState)
+end)
+
+-- Force all new players into gamemode
+RegisterNetEvent('thegreatwar:playerConnected', function()
+    local src = source
+    SetTimeout(5000, function() -- Give time for QBCore to load
+        TriggerClientEvent('thegreatwar:forceGamemodeJoin', src)
+    end)
+end)
+
+-- Handle player disconnection from server
+AddEventHandler('playerDropped', function(reason)
+    local src = source
+    if GameState.players[src] then
+        print("^2[The Great War] ^7Player disconnected: " .. GameState.players[src].nickname)
+        GameState.players[src] = nil
+    end
+end)
+
 -- Vote handling
 RegisterNetEvent('thegreatwar:voteMap', function(mapName)
     local src = source

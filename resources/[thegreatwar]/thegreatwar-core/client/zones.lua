@@ -5,6 +5,14 @@ local zones = {}
 local inSafeZone = false
 local currentHotZones = {}
 
+-- Wait for config to be loaded
+CreateThread(function()
+    while not Config or not Config.maps do
+        Wait(100)
+    end
+    print("^2[The Great War Zones] ^7Config loaded")
+end)
+
 -- Zone creation and management
 function CreateSafeZone(coords, radius)
     local zone = {
@@ -140,7 +148,9 @@ end)
 
 -- Initialize safe zones when session starts
 RegisterNetEvent('thegreatwar:sessionStarted', function(sessionData)
-    local map = Config.Maps[sessionData.map]
+    if not Config.maps or not Config.maps[sessionData.map] then return end
+    
+    local map = Config.maps[sessionData.map]
     if map and map.safezone then
         CreateSafeZone(vector3(map.safezone.x, map.safezone.y, map.safezone.z), map.safezone.radius)
     end

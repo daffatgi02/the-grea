@@ -15,6 +15,14 @@ local GameState = {
 local championDisplay = nil
 local voteUI = false
 
+-- Wait for config to be loaded
+CreateThread(function()
+    while not Config or not Config.maps do
+        Wait(100)
+    end
+    print("^2[The Great War Client] ^7Config loaded")
+end)
+
 -- Events
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     TriggerServerEvent('thegreatwar:playerJoined')
@@ -46,7 +54,7 @@ RegisterNetEvent('thegreatwar:sessionStarted', function(sessionData)
     end
     
     -- Show session start notification
-    QBCore.Functions.Notify("🎮 The Great War has begun! Map: " .. Config.Maps[sessionData.map].name, "success", 5000)
+    QBCore.Functions.Notify("🎮 The Great War has begun! Map: " .. (Config.maps[sessionData.map] and Config.maps[sessionData.map].name or sessionData.map), "success", 5000)
     
     -- Enable spawn selection
     ShowSpawnSelection(sessionData.map)
@@ -67,13 +75,16 @@ RegisterNetEvent('thegreatwar:showMapVoting', function(maps)
 end)
 
 RegisterNetEvent('thegreatwar:voteReceived', function(mapName)
-    QBCore.Functions.Notify("Vote received: " .. Config.Maps[mapName].name, "success", 2000)
+    local mapDisplayName = Config.maps and Config.maps[mapName] and Config.maps[mapName].name or mapName
+    QBCore.Functions.Notify("Vote received: " .. mapDisplayName, "success", 2000)
 end)
 
 RegisterNetEvent('thegreatwar:roleSelected', function(roleName)
     GameState.myRole = roleName
-    local role = Config.Roles[roleName]
-    QBCore.Functions.Notify("Role selected: " .. role.icon .. " " .. role.name, "success", 3000)
+    if Config.roles and Config.roles[roleName] then
+        local role = Config.roles[roleName]
+        QBCore.Functions.Notify("Role selected: " .. role.icon .. " " .. role.name, "success", 3000)
+    end
 end)
 
 RegisterNetEvent('thegreatwar:killFeed', function(killData)
@@ -109,48 +120,53 @@ function ShowMapVotingUI(maps)
 end
 
 function ShowSpawnSelection(mapName)
-    local map = Config.Maps[mapName]
-    if not map then return end
-    
-    local spawnOptions = {}
-    for i, spawn in ipairs(map.spawns) do
-        table.insert(spawnOptions, {
-            label = "Spawn Point " .. i,
-            coords = spawn
-        })
+    if not Config.maps or not Config.maps[mapName] then 
+        QBCore.Functions.Notify("Map configuration not found", "error")
+        return 
     end
     
-    -- Show spawn selection menu
-    exports['qb-menu']:openMenu({
-        {
-            header = "Select Spawn Location",
-            isMenuHeader = true
-        },
-        {
-            header = "📍 " .. map.name,
-            txt = map.description,
-            isMenuHeader = true
-        }
-    })
+    local map = Config.maps[mapName]
+    local spawnOptions = {}
     
-    for i, option in ipairs(spawnOptions) do
-        exports['qb-menu']:openMenu({
-            {
-                header = option.label,
-                txt = "Teleport to this spawn point",
-                params = {
-                    event = "thegreatwar:selectSpawn",
-                    args = {coords = option.coords}
-                }
+    for i, spawn in ipairs(map.spawns) do
+        table.insert(spawnOptions, {
+            header = "📍 Spawn Point " .. i,
+            txt = "Teleport to this spawn point",
+            params = {
+                event = "thegreatwar:selectSpawn",
+                args = {coords = spawn}
             }
         })
     end
+    
+    -- Add header
+    table.insert(spawnOptions, 1, {
+        header = "🗺️ " .. map.name,
+        txt = map.description,
+        isMenuHeader = true
+    })
+    
+    table.insert(spawnOptions, 1, {
+        header = "Select Spawn Location",
+        isMenuHeader = true
+    })
+    
+    -- Show spawn selection menu
+    exports['qb-menu']:openMenu(spawnOptions)
 end
 
 function ShowRoleSelection()
-    local roleOptions = {}
+    if not Config.roles then
+        QBCore.Functions.Notify("Role configuration not found", "error")
+        return
+    end
     
-    for roleId, role in pairs(Config.Roles) do
+    local roleOptions = {{
+        header = "⚔️ Select Your Role",
+        isMenuHeader = true
+    }}
+    
+    for roleId, role in pairs(Config.roles) do
         table.insert(roleOptions, {
             header = role.icon .. " " .. role.name,
             txt = "Select this role",
@@ -161,13 +177,7 @@ function ShowRoleSelection()
         })
     end
     
-    exports['qb-menu']:openMenu({
-        {
-            header = "⚔️ Select Your Role",
-            isMenuHeader = true
-        },
-        table.unpack(roleOptions)
-    })
+    exports['qb-menu']:openMenu(roleOptions)
 end
 
 function ShowKillFeed(killData)
@@ -237,6 +247,14 @@ end)
 RegisterCommand('tgw_stats', function()
     -- Show personal stats
     TriggerServerEvent('thegreatwar:getMyStats')
+end)
+
+RegisterCommand('tgw_spawn', function()
+    if GameState.currentMap then
+        ShowSpawnSelection(GameState.currentMap)
+    else
+        QBCore.Functions.Notify("No active map", "error")
+    end
 end)
 
 -- Disable normal spawning during active session
